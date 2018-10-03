@@ -6,11 +6,11 @@ import type {
   RootGraphQLSchema,
   SwaggerToGraphQLOptions,
   GraphQLTypeMap
-} from "./types";
-import rp from "request-promise";
-import { GraphQLSchema, GraphQLObjectType } from "graphql";
-import { getAllEndPoints, loadSchema, loadRefs } from "./swagger";
-import { createGQLObject, mapParametersToFields } from "./typeMap";
+} from './types';
+import rp from 'request-promise';
+import { GraphQLSchema, GraphQLObjectType } from 'graphql';
+import { getAllEndPoints, loadSchema, loadRefs } from './swagger';
+import { createGQLObject, mapParametersToFields } from './typeMap';
 
 type Endpoints = { [string]: Endpoint };
 
@@ -18,10 +18,10 @@ const schemaFromEndpoints = (endpoints: Endpoints, proxyUrl, headers) => {
   const gqlTypes = {};
   const queryFields = getFields(endpoints, false, gqlTypes, proxyUrl, headers);
   if (!Object.keys(queryFields).length) {
-    throw new Error("Did not find any GET endpoints");
+    throw new Error('Did not find any GET endpoints');
   }
   const rootType = new GraphQLObjectType({
-    name: "Query",
+    name: 'Query',
     fields: queryFields
   });
 
@@ -38,7 +38,7 @@ const schemaFromEndpoints = (endpoints: Endpoints, proxyUrl, headers) => {
   );
   if (Object.keys(mutationFields).length) {
     graphQLSchema.mutation = new GraphQLObjectType({
-      name: "Mutation",
+      name: 'Mutation',
       fields: mutationFields
     });
   }
@@ -53,16 +53,22 @@ const resolver = (
 ) => async (_, args: GraphQLParameters, opts: SwaggerToGraphQLOptions) => {
   const proxy = !proxyUrl
     ? opts.GQLProxyBaseUrl
-    : typeof proxyUrl === "function"
+    : typeof proxyUrl === 'function'
       ? proxyUrl(opts)
       : proxyUrl;
   const req = endpoint.request(args, proxy);
+
   if (opts.headers) {
     const { host, ...otherHeaders } = opts.headers;
     req.headers = Object.assign(customHeaders, req.headers, otherHeaders);
   }
+
+  // fix Response json
+  req.json = true;
+  req.gzip = true;
+
   const res = await rp(req);
-  return JSON.parse(res);
+  return res;
 };
 
 const getFields = (

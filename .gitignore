@@ -3,6 +3,7 @@
 *.sublime-workspace
 .idea/
 .vscode/
+.history
 
 lib-cov
 *.seed

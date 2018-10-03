@@ -4,7 +4,7 @@
   "author": "Roman Krivtsov",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yarax/swagger-to-graphql.git"
+    "url": "https://github.com/dkuznetsov44/swagger-to-graphql.git"
   },
   "bin": "./bin/swagger2graphql",
   "dependencies": {

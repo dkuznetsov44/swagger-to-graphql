@@ -58,9 +58,13 @@ const resolver = (
       : proxyUrl;
   const req = endpoint.request(args, proxy);
 
+  if (Object.keys(customHeaders).length > 0) {
+    req.headers = Object.assign({}, customHeaders, req.headers);
+  }
+
   if (opts.headers) {
     const { host, ...otherHeaders } = opts.headers;
-    req.headers = Object.assign(customHeaders, req.headers, otherHeaders);
+    req.headers = Object.assign({}, req.headers, otherHeaders);
   }
 
   // fix Response json
